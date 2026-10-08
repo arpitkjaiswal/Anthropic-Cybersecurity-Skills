@@ -126,8 +126,6 @@ def validate_skill(skill_dir):
         errors.append(
             f"Description too short ({len(desc)} chars, min {DESCRIPTION_MIN_CHARS})"
         )
-        # No hard upper-limit enforced; multi-line folded scalars (>-) produce
-        # long strings that are valid and common in this repo.
 
     # Validate domain.
     domain = fm.get("domain", "")
