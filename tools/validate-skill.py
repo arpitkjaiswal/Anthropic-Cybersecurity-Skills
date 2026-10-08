@@ -117,7 +117,8 @@ def validate_skill(skill_dir):
         if len(name) > 64:
             errors.append(f"Name too long ({len(name)} chars, max 64)")
 
-    # Validate description.
+    # Validate description. Multi-line descriptions are valid, so only a
+    # minimum length is enforced here.
     desc = fm.get("description", "")
     if not isinstance(desc, str):
         errors.append("Description must be a string")
