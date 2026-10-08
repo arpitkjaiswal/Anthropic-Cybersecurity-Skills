@@ -107,7 +107,9 @@ def validate_skill(skill_dir):
 
     # Validate name.
     name = fm.get("name", "")
-    if name:
+    if not isinstance(name, str):
+        errors.append("Name must be a string")
+    elif name:
         if not KEBAB_RE.match(name):
             errors.append(
                 f"Name '{name}' is not valid kebab-case (lowercase letters, digits, hyphens only)"
@@ -117,24 +119,27 @@ def validate_skill(skill_dir):
 
     # Validate description.
     desc = fm.get("description", "")
-    if isinstance(desc, list):
-        errors.append("Description must be a string value, not a list")
-    elif isinstance(desc, str):
-        if len(desc) < DESCRIPTION_MIN_CHARS:
-            errors.append(
-                f"Description too short ({len(desc)} chars, min {DESCRIPTION_MIN_CHARS})"
-            )
+    if not isinstance(desc, str):
+        errors.append("Description must be a string")
+    elif len(desc) < DESCRIPTION_MIN_CHARS:
+        errors.append(
+            f"Description too short ({len(desc)} chars, min {DESCRIPTION_MIN_CHARS})"
+        )
         # No hard upper-limit enforced; multi-line folded scalars (>-) produce
         # long strings that are valid and common in this repo.
 
     # Validate domain.
     domain = fm.get("domain", "")
-    if domain and domain != "cybersecurity":
+    if not isinstance(domain, str):
+        errors.append("Domain must be a string")
+    elif domain and domain != "cybersecurity":
         errors.append(f"Domain must be 'cybersecurity', got '{domain}'")
 
     # Validate subdomain.
     subdomain = fm.get("subdomain", "")
-    if subdomain:
+    if not isinstance(subdomain, str):
+        errors.append("Subdomain must be a string")
+    elif subdomain:
         if subdomain not in ALLOWED_SUBDOMAINS:
             errors.append(
                 f"Unknown subdomain '{subdomain}'. Allowed: {', '.join(sorted(ALLOWED_SUBDOMAINS))}"
@@ -150,9 +155,11 @@ def validate_skill(skill_dir):
 
     # Validate tags.
     tags = fm.get("tags", [])
-    if isinstance(tags, str):
-        tags = [tags]
-    if len(tags) < 2:
+    if not isinstance(tags, list):
+        errors.append("Tags must be a list")
+    elif any(not isinstance(tag, str) for tag in tags):
+        errors.append("Tags must contain only strings")
+    elif len(tags) < 2:
         errors.append(f"Need at least 2 tags, got {len(tags)}")
 
     return errors
